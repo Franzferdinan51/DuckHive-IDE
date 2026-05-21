@@ -1,26 +1,46 @@
 import React from 'react';
-import { useAgentStore } from '../stores/agentStore';
 
-export function StatusBar() {
-  const { sessionStatus, provider, model, tokenUsage } = useAgentStore();
+interface StatusBarProps {
+  panelVisible: boolean;
+  onTogglePanel: () => void;
+  panelId: string;
+}
 
+export function StatusBar({ panelVisible, onTogglePanel, panelId }: StatusBarProps) {
   return (
-    <div className="status-bar">
-      <div className="status-bar-left">
+    <div className="statusbar">
+      <div className="statusbar-left">
         <div className="status-item">
-          <span>●</span>
-          <span>{sessionStatus}</span>
+          <span className="status-icon">☰</span>
+          <span>main</span>
         </div>
         <div className="status-item">
-          <span>Model: {model || 'minimax-01'}</span>
+          <span className="status-icon">↻</span>
+          <span>0</span>
+        </div>
+        <div className="status-item clickable" onClick={onTogglePanel}>
+          <span className="status-icon">{panelVisible ? '⌄' : '⌃'}</span>
+          <span>{panelId}</span>
         </div>
       </div>
-      <div className="status-bar-right">
+
+      <div className="statusbar-right">
         <div className="status-item">
-          <span>Tokens: {tokenUsage}</span>
+          <span className="status-icon">🔷</span>
+          <span>TypeScript</span>
         </div>
         <div className="status-item">
-          <span>Provider: {provider}</span>
+          <span>Ln 42, Col 18</span>
+        </div>
+        <div className="status-item">
+          <span>UTF-8</span>
+        </div>
+        <div className="status-item">
+          <span>Spaces: 2</span>
+        </div>
+        <div className="status-item ai-status">
+          <span className="status-icon">🤖</span>
+          <span>DuckHive AI</span>
         </div>
       </div>
     </div>
