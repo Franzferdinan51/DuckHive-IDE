@@ -1,0 +1,198 @@
+{
+  "name": "duckhive-ide",
+  "displayName": "DuckHive-IDE",
+  "description": "AI-First IDE for Vibe Coding - VS Code Extension",
+  "version": "0.1.0",
+  "publisher": "duckhive",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "AI",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "agent",
+    "vibe-coding",
+    "duckhive",
+    "openai",
+    "copilot"
+  ],
+  "activationEvents": [
+    "onCommand:duckhive-ide.start",
+    "onCommand:duckhive-ide.chat",
+    "onLanguage"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "duckhive-ide.start",
+        "title": "DuckHive: Start IDE",
+        "category": "DuckHive",
+        "description": "Start the DuckHive-IDE interface"
+      },
+      {
+        "command": "duckhive-ide.chat",
+        "title": "DuckHive: Chat with Agent",
+        "category": "DuckHive",
+        "description": "Open chat panel to communicate with DuckHive agent"
+      },
+      {
+        "command": "duckhive-ide.inline",
+        "title": "DuckHive: Inline Chat",
+        "category": "DuckHive",
+        "description": "Ask DuckHive about selected code"
+      },
+      {
+        "command": "duckhive-ide.spawn",
+        "title": "DuckHive: Spawn Agent",
+        "category": "DuckHive",
+        "description": "Spawn a new sub-agent for a task"
+      },
+      {
+        "command": "duckhive-ide.council",
+        "title": "DuckHive: Invoke Council",
+        "category": "DuckHive",
+        "description": "Invoke AI Council for code review"
+      },
+      {
+        "command": "duckhive-ide.config",
+        "title": "DuckHive: Configure",
+        "category": "DuckHive",
+        "description": "Open DuckHive configuration"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "duckhive-ide.inline",
+          "when": "editorHasSelection",
+          "group": "DuckHive@1"
+        },
+        {
+          "command": "duckhive-ide.chat",
+          "when": "editorTextFocus",
+          "group": "DuckHive@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "duckhive-ide.start",
+          "when": "!duckhive-ide.active"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "duckhive-ide.chat",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "duckhive-ide.inline",
+        "key": "ctrl+shift+i",
+        "mac": "cmd+shift+i",
+        "when": "editorHasSelection"
+      },
+      {
+        "command": "duckhive-ide.council",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "DuckHive-IDE",
+      "properties": {
+        "duckhive.provider": {
+          "type": "string",
+          "default": "minimax",
+          "description": "Default AI provider",
+          "enum": [
+            "minimax",
+            "openai",
+            "anthropic",
+            "gemini",
+            "ollama"
+          ]
+        },
+        "duckhive.model": {
+          "type": "string",
+          "default": "minimax-01",
+          "description": "Default model to use"
+        },
+        "duckhive.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API Key for the selected provider"
+        },
+        "duckhive.workspacePath": {
+          "type": "string",
+          "default": "~/duckhive-projects",
+          "description": "Default workspace path"
+        },
+        "duckhive.councilEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable AI Council for code review"
+        },
+        "duckhive.theme": {
+          "type": "string",
+          "default": "dark",
+          "description": "UI theme",
+          "enum": [
+            "dark",
+            "light"
+          ]
+        }
+      }
+    },
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "duckhive-panel",
+          "title": "DuckHive",
+          "icon": "resources/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "duckhive-panel": [
+        {
+          "id": "duckhive-chat",
+          "name": "Chat",
+          "type": "webview"
+        },
+        {
+          "id": "duckhive-terminal",
+          "name": "Terminal",
+          "type": "webview"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "node ./out/test/runTest.js",
+    "lint": "eslint ./src --ext .ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-electron": "^2.4.0",
+    "@vscode/test-web": "^1.0.0",
+    "typescript": "^5.4.0",
+    "eslint": "^9.0.0",
+    "tslib": "^2.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0"
+  },
+  "dependencies": {
+    "vscode": "^1.90.0"
+  }
+}
