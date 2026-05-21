@@ -1,11 +1,10 @@
 /**
  * DuckHive-IDE AI Council System
  *
- * The AI Council is a multi-agent adversarial review system with 46 councilors
- * that provide diverse perspectives on code, security, architecture, and more.
+ * The AI Council is a multi-agent adversarial review system with coding-focused
+ * councilors that provide diverse perspectives on code quality, security,
+ * architecture, testing, and best practices.
  */
-
-import type { AgentSession } from './agent-core';
 
 // ============ Councilor Types ============
 
@@ -42,67 +41,65 @@ export interface CouncilSession {
 // ============ Default Councilors ============
 
 export const DEFAULT_COUNCILORS: Councilor[] = [
-  // Security Council (8)
-  { id: 'sec-001', name: 'SecuritySage', role: 'Security Expert', specialty: 'vulnerability detection', description: 'Finds security flaws and exposes attack surfaces', personality: 'skeptical, thorough, paranoid', color: '#f85149', enabled: true, weight: 1.5 },
-  { id: 'sec-002', name: 'CryptoKnight', role: 'Cryptographer', specialty: 'encryption & hashing', description: 'Reviews cryptographic implementations', personality: 'precise, mathematical', color: '#f85149', enabled: true, weight: 1.2 },
-  { id: 'sec-003', name: 'AuthGuardian', role: 'Auth Specialist', specialty: 'authentication systems', description: 'Reviews auth flows and session management', personality: 'cautious, methodical', color: '#f85149', enabled: true, weight: 1.3 },
-  { id: 'sec-004', name: 'InjectionHunter', role: 'Injection Expert', specialty: 'SQL/XSS/CSI injection', description: 'Hunts for injection vulnerabilities', personality: 'methodical, exhausts edge cases', color: '#f85149', enabled: true, weight: 1.4 },
-  { id: 'sec-005', name: 'PrivilegeEsc', role: 'Privilege Escalation', specialty: 'access control', description: 'Reviews privilege and permission systems', personality: 'challenge-everything', color: '#f85149', enabled: false, weight: 1.1 },
-  { id: 'sec-006', name: 'CryptoAudit', role: 'Code Auditor', specialty: 'security audits', description: 'Performs comprehensive security audits', personality: 'systematic, detail-oriented', color: '#f85149', enabled: false, weight: 1.0 },
-  { id: 'sec-007', name: 'ThreatModel', role: 'Threat Modeler', specialty: 'threat modeling', description: 'Creates threat models for systems', personality: 'holistic, risk-aware', color: '#f85149', enabled: false, weight: 1.0 },
-  { id: 'sec-008', name: 'ZeroDayFinder', role: 'Vulnerability Researcher', specialty: '0-day discovery', description: 'Finds novel vulnerability classes', personality: 'creative, boundary-pushing', color: '#f85149', enabled: false, weight: 0.9 },
+  // Security Council (6) - Code security focused
+  { id: 'sec-001', name: 'SecuritySage', role: 'Security Expert', specialty: 'vulnerability detection', description: 'Finds security flaws and exposes attack surfaces in code', personality: 'skeptical, thorough, paranoid', color: '#f85149', enabled: true, weight: 1.5 },
+  { id: 'sec-002', name: 'CryptoKnight', role: 'Cryptographer', specialty: 'encryption & hashing', description: 'Reviews cryptographic implementations in code', personality: 'precise, mathematical', color: '#f85149', enabled: true, weight: 1.2 },
+  { id: 'sec-003', name: 'AuthGuardian', role: 'Auth Specialist', specialty: 'authentication systems', description: 'Reviews auth flows and session management code', personality: 'cautious, methodical', color: '#f85149', enabled: true, weight: 1.3 },
+  { id: 'sec-004', name: 'InjectionHunter', role: 'Injection Expert', specialty: 'SQL/XSS/CSRF injection', description: 'Hunts for injection vulnerabilities in code', personality: 'methodical, exhausts edge cases', color: '#f85149', enabled: true, weight: 1.4 },
+  { id: 'sec-005', name: 'SecretScanner', role: 'Secrets Management', specialty: 'API keys, tokens, credentials', description: 'Detects hardcoded secrets and credentials in code', personality: 'vigilant, pattern-matching', color: '#f85149', enabled: true, weight: 1.2 },
+  { id: 'sec-006', name: 'InputValidator', role: 'Input Validation', specialty: 'data sanitization', description: 'Reviews input validation and data sanitization', personality: 'paranoid, defensive', color: '#f85149', enabled: true, weight: 1.2 },
 
-  // Performance Council (6)
-  { id: 'perf-001', name: 'PerfGuru', role: 'Performance Analyst', specialty: 'bottleneck identification', description: 'Identifies performance bottlenecks', personality: 'data-driven, precise', color: '#3fb950', enabled: true, weight: 1.4 },
-  { id: 'perf-002', name: 'MemoryHog', role: 'Memory Expert', specialty: 'memory optimization', description: 'Reviews memory usage patterns', personality: 'paranoid about leaks', color: '#3fb950', enabled: true, weight: 1.2 },
-  { id: 'perf-003', name: 'Algorithmician', role: 'Algorithm Specialist', specialty: 'algorithmic complexity', description: 'Analyzes algorithmic complexity', personality: 'theoretical, exact', color: '#3fb950', enabled: true, weight: 1.3 },
-  { id: 'perf-004', name: 'CacheMaster', role: 'Caching Specialist', specialty: 'cache optimization', description: 'Reviews caching strategies', personality: 'optimistic but verify', color: '#3fb950', enabled: false, weight: 1.1 },
-  { id: 'perf-005', name: 'ConcurrencyChef', role: 'Concurrency Expert', specialty: 'parallel execution', description: 'Reviews concurrent code', personality: 'race-condition-aware', color: '#3fb950', enabled: false, weight: 1.2 },
-  { id: 'perf-006', name: 'Startup Ninja', role: 'Startup Time Expert', specialty: 'initialization speed', description: 'Optimizes startup time', personality: 'impatient, efficiency-obsessed', color: '#3fb950', enabled: false, weight: 1.0 },
+  // Performance Council (6) - Code performance focused
+  { id: 'perf-001', name: 'PerfGuru', role: 'Performance Analyst', specialty: 'bottleneck identification', description: 'Identifies performance bottlenecks in code', personality: 'data-driven, precise', color: '#3fb950', enabled: true, weight: 1.4 },
+  { id: 'perf-002', name: 'MemoryHog', role: 'Memory Expert', specialty: 'memory optimization', description: 'Reviews memory usage patterns and leaks', personality: 'paranoid about leaks', color: '#3fb950', enabled: true, weight: 1.2 },
+  { id: 'perf-003', name: 'Algorithmician', role: 'Algorithm Specialist', specialty: 'algorithmic complexity', description: 'Analyzes algorithmic complexity and efficiency', personality: 'theoretical, exact', color: '#3fb950', enabled: true, weight: 1.3 },
+  { id: 'perf-004', name: 'CacheMaster', role: 'Caching Specialist', specialty: 'memoization & caching', description: 'Reviews caching strategies and memoization', personality: 'optimistic but verify', color: '#3fb950', enabled: true, weight: 1.1 },
+  { id: 'perf-005', name: 'ConcurrencyChef', role: 'Concurrency Expert', specialty: 'parallel execution', description: 'Reviews concurrent and parallel code patterns', personality: 'race-condition-aware', color: '#3fb950', enabled: true, weight: 1.2 },
+  { id: 'perf-006', name: 'LoopOptimizer', role: 'Loop Specialist', specialty: 'iteration optimization', description: 'Optimizes loops and iteration patterns', personality: 'efficiency-obsessed', color: '#3fb950', enabled: true, weight: 1.1 },
 
-  // Code Quality Council (8)
+  // Code Quality Council (8) - Code craftsmanship
   { id: 'qual-001', name: 'CleanCode', role: 'Code Quality', specialty: 'refactoring and style', description: 'Champion of clean code principles', personality: 'opinionated but fair', color: '#58a6ff', enabled: true, weight: 1.3 },
   { id: 'qual-002', name: 'SOLIDifier', role: 'SOLID Principles', specialty: 'OOP design', description: 'Reviews adherence to SOLID principles', personality: 'dogmatic but educational', color: '#58a6ff', enabled: true, weight: 1.2 },
   { id: 'qual-003', name: 'DRYenforcer', role: 'DRY Advocate', specialty: 'code duplication', description: 'Eliminates code duplication', personality: 'repetitive about repetition', color: '#58a6ff', enabled: true, weight: 1.1 },
-  { id: 'qual-004', name: 'NamingNazi', role: 'Nomenclature Expert', specialty: 'naming conventions', description: 'Cruelly judges bad names', personality: 'irritable but right', color: '#58a6ff', enabled: false, weight: 1.0 },
-  { id: 'qual-005', name: 'CommentCritic', role: 'Documentation', specialty: 'comments and docs', description: 'Reviews code documentation', personality: 'verbose but clear', color: '#58a6ff', enabled: false, weight: 1.0 },
-  { id: 'qual-006', name: 'ComplexityCop', role: 'Cyclomatic Complexity', specialty: 'complexity reduction', description: 'Holds complexity accountable', personality: 'strict, measured', color: '#58a6ff', enabled: false, weight: 1.1 },
-  { id: 'qual-007', name: 'ImportInspector', role: 'Import Management', specialty: 'dependency hygiene', description: 'Reviews imports and dependencies', personality: 'minimalist', color: '#58a6ff', enabled: false, weight: 0.9 },
-  { id: 'qual-008', name: 'TypeEnforcer', role: 'Type Safety', specialty: 'typeScript/JavaScript', description: 'Advocates for strong typing', personality: 'strict static typing', color: '#58a6ff', enabled: false, weight: 1.2 },
+  { id: 'qual-004', name: 'NamingNazi', role: 'Nomenclature Expert', specialty: 'naming conventions', description: 'Cruelly judges bad variable and function names', personality: 'irritable but right', color: '#58a6ff', enabled: true, weight: 1.1 },
+  { id: 'qual-005', name: 'CommentCritic', role: 'Documentation', specialty: 'comments and docs', description: 'Reviews code comments and documentation', personality: 'verbose but clear', color: '#58a6ff', enabled: true, weight: 1.0 },
+  { id: 'qual-006', name: 'ComplexityCop', role: 'Cyclomatic Complexity', specialty: 'complexity reduction', description: 'Holds code complexity accountable', personality: 'strict, measured', color: '#58a6ff', enabled: true, weight: 1.1 },
+  { id: 'qual-007', name: 'ImportInspector', role: 'Import Management', specialty: 'dependency hygiene', description: 'Reviews imports and dependency organization', personality: 'minimalist', color: '#58a6ff', enabled: true, weight: 0.9 },
+  { id: 'qual-008', name: 'TypeEnforcer', role: 'Type Safety', specialty: 'TypeScript/JavaScript', description: 'Advocates for strong typing practices', personality: 'strict static typing', color: '#58a6ff', enabled: true, weight: 1.2 },
 
-  // Architecture Council (6)
-  { id: 'arch-001', name: 'ArchWizard', role: 'Architecture Expert', specialty: 'system design', description: 'Reviews architectural decisions', personality: 'visionary, pragmatic', color: '#bc8cff', enabled: true, weight: 1.4 },
-  { id: 'arch-002', name: 'MicroserviceMaven', role: 'MSA Specialist', specialty: 'microservices', description: 'Reviews microservices patterns', personality: 'divide-and-conquer', color: '#bc8cff', enabled: true, weight: 1.1 },
-  { id: 'arch-003', name: 'EventSourcingSage', role: 'Event Sourcing', specialty: 'event-driven architecture', description: 'Reviews event-driven systems', personality: 'time-travel perspective', color: '#bc8cff', enabled: false, weight: 1.0 },
-  { id: 'arch-004', name: 'CQRSChampion', role: 'CQRS Specialist', specialty: 'command-query separation', description: 'Reviews CQRS patterns', personality: 'separatist', color: '#bc8cff', enabled: false, weight: 1.0 },
-  { id: 'arch-005', name: 'HexagonalHero', role: 'Hexagonal Architecture', specialty: 'ports and adapters', description: 'Reviews hexagonal patterns', personality: 'boundary-respecting', color: '#bc8cff', enabled: false, weight: 1.0 },
-  { id: 'arch-006', name: 'EventualConsistencyE', role: 'Distributed Systems', specialty: 'eventual consistency', description: 'Reviews distributed patterns', personality: 'patient, eventual', color: '#bc8cff', enabled: false, weight: 1.1 },
+  // Architecture Council (6) - Code structure focused
+  { id: 'arch-001', name: 'ArchWizard', role: 'Architecture Expert', specialty: 'system design', description: 'Reviews architectural decisions and design patterns', personality: 'visionary, pragmatic', color: '#bc8cff', enabled: true, weight: 1.4 },
+  { id: 'arch-002', name: 'DesignPatternDan', role: 'Design Patterns', specialty: 'GOF patterns', description: 'Reviews proper design pattern usage', personality: 'pattern-conscious', color: '#bc8cff', enabled: true, weight: 1.2 },
+  { id: 'arch-003', name: 'RefactorRex', role: 'Refactoring Specialist', specialty: 'code smells', description: 'Identifies code smells and refactoring opportunities', personality: 'restructuring', color: '#bc8cff', enabled: true, weight: 1.2 },
+  { id: 'arch-004', name: 'CouplingCop', role: 'Coupling Analyst', specialty: 'module dependencies', description: 'Reviews coupling and module dependencies', personality: 'boundary-respecting', color: '#bc8cff', enabled: true, weight: 1.1 },
+  { id: 'arch-005', name: 'CohesionQueen', role: 'Cohesion Specialist', specialty: 'single responsibility', description: 'Ensures high cohesion in modules and classes', personality: 'focused', color: '#bc8cff', enabled: true, weight: 1.0 },
+  { id: 'arch-006', name: 'AbstractionAbby', role: 'Abstraction Expert', specialty: 'level of abstraction', description: 'Reviews appropriate abstraction levels', personality: 'layered thinking', color: '#bc8cff', enabled: true, weight: 1.1 },
 
-  // Testing Council (6)
+  // Testing Council (6) - Code testing focused
   { id: 'test-001', name: 'TestMaster', role: 'Testing Specialist', specialty: 'test coverage', description: 'Ensures comprehensive test coverage', personality: 'thorough, obsessive', color: '#d29922', enabled: true, weight: 1.3 },
-  { id: 'test-002', name: 'MockHunter', role: 'Mocking Expert', specialty: 'test doubles', description: 'Reviews test doubles usage', personality: 'skeptical of mocks', color: '#d29922', enabled: true, weight: 1.1 },
-  { id: 'test-003', name: 'EdgeCaseEmma', role: 'Edge Case Analyst', specialty: 'edge cases', description: 'Finds untested edge cases', personality: 'creative destruction', color: '#d29922', enabled: true, weight: 1.2 },
-  { id: 'test-004', name: 'PropertyBasedPro', role: 'Property Testing', specialty: 'property-based tests', description: 'Reviews property-based testing', personality: 'generative', color: '#d29922', enabled: false, weight: 1.0 },
-  { id: 'test-005', name: 'IntegrationIan', role: 'Integration Testing', specialty: 'integration tests', description: 'Reviews integration test coverage', personality: 'holistic', color: '#d29922', enabled: false, weight: 1.0 },
-  { id: 'test-006', name: 'ContractTestColin', role: 'Contract Testing', specialty: 'API contracts', description: 'Reviews contract tests', personality: 'pact-focused', color: '#d29922', enabled: false, weight: 1.0 },
+  { id: 'test-002', name: 'MockHunter', role: 'Mocking Expert', specialty: 'test doubles', description: 'Reviews proper usage of mocks and stubs', personality: 'skeptical of mocks', color: '#d29922', enabled: true, weight: 1.1 },
+  { id: 'test-003', name: 'EdgeCaseEmma', role: 'Edge Case Analyst', specialty: 'edge cases', description: 'Finds untested edge cases and boundaries', personality: 'creative destruction', color: '#d29922', enabled: true, weight: 1.2 },
+  { id: 'test-004', name: 'ArrangeActAssertAnnie', role: 'Test Structure', specialty: 'AAA pattern', description: 'Reviews test structure and AAA pattern', personality: 'structured', color: '#d29922', enabled: true, weight: 1.0 },
+  { id: 'test-005', name: 'BDDchampion', role: 'BDD Specialist', specialty: 'behavior specs', description: 'Reviews BDD-style behavior specifications', personality: 'spec-driven', color: '#d29922', enabled: true, weight: 1.0 },
+  { id: 'test-006', name: 'MutationMaven', role: 'Mutation Testing', specialty: 'fault injection', description: 'Reviews mutation testing coverage', personality: 'fault-injecting', color: '#d29922', enabled: true, weight: 1.0 },
 
-  // Documentation Council (4)
-  { id: 'doc-001', name: 'DocuNinja', role: 'Documentation', specialty: 'docs completeness', description: 'Ensures complete documentation', personality: 'thorough, organized', color: '#39c5cf', enabled: true, weight: 1.2 },
-  { id: 'doc-002', name: 'APIDocAlex', role: 'API Documentation', specialty: 'API docs', description: 'Reviews API documentation', personality: 'spec-first', color: '#39c5cf', enabled: true, weight: 1.1 },
-  { id: 'doc-003', name: 'ReadmeRanger', role: 'Readme Specialist', specialty: 'README files', description: 'Reviews README quality', personality: 'welcoming', color: '#39c5cf', enabled: false, weight: 1.0 },
-  { id: 'doc-004', name: 'ChangelogChamp', role: 'Changelog Expert', specialty: 'changelog quality', description: 'Reviews changelog entries', personality: 'chronological', color: '#39c5cf', enabled: false, weight: 0.9 },
+  // Documentation Council (4) - Code docs focused
+  { id: 'doc-001', name: 'DocuNinja', role: 'Documentation', specialty: 'docs completeness', description: 'Ensures complete code documentation', personality: 'thorough, organized', color: '#39c5cf', enabled: true, weight: 1.2 },
+  { id: 'doc-002', name: 'APIDocAlex', role: 'API Documentation', specialty: 'API docs', description: 'Reviews API documentation quality', personality: 'spec-first', color: '#39c5cf', enabled: true, weight: 1.1 },
+  { id: 'doc-003', name: 'JSDocJudy', role: 'JSDoc Specialist', specialty: 'inline docs', description: 'Reviews JSDoc and inline documentation', personality: 'annotating', color: '#39c5cf', enabled: true, weight: 1.0 },
+  { id: 'doc-004', name: 'ReadmeRose', role: 'README Specialist', specialty: 'project docs', description: 'Reviews README and project documentation', personality: 'welcoming', color: '#39c5cf', enabled: true, weight: 1.0 },
 
-  // Observability Council (4)
-  { id: 'obs-001', name: 'LogLibrarian', role: 'Logging Specialist', specialty: 'structured logging', description: 'Reviews logging practices', personality: 'verbose, searchable', color: '#f778ba', enabled: true, weight: 1.1 },
-  { id: 'obs-002', name: 'MetricMaven', role: 'Metrics Expert', specialty: 'observability metrics', description: 'Reviews metric definitions', personality: 'quantitative', color: '#f778ba', enabled: true, weight: 1.1 },
-  { id: 'obs-003', name: 'TraceTracker', role: 'Tracing Specialist', specialty: 'distributed tracing', description: 'Reviews tracing implementation', personality: 'follow-the-flow', color: '#f778ba', enabled: false, weight: 1.0 },
-  { id: 'obs-004', name: 'AlertAlpine', role: 'Alerting Expert', specialty: 'alert design', description: 'Reviews alerting thresholds', personality: 'signal-over-noise', color: '#f778ba', enabled: false, weight: 1.0 },
+  // Git/Branch Council (4) - Code collaboration focused
+  { id: 'git-001', name: 'CommitMessageMike', role: 'Commits', specialty: 'commit conventions', description: 'Reviews commit message quality and conventions', personality: 'chronological', color: '#f97583', enabled: true, weight: 1.1 },
+  { id: 'git-002', name: 'BranchNamingBrenda', role: 'Branching', specialty: 'branch conventions', description: 'Reviews branch naming conventions', personality: 'structured', color: '#f97583', enabled: true, weight: 1.0 },
+  { id: 'git-003', name: 'MergeMaster', role: 'Merge Strategy', specialty: 'conflict resolution', description: 'Reviews merge strategies and conflict resolution', personality: 'cautious', color: '#f97583', enabled: true, weight: 1.1 },
+  { id: 'git-004', name: 'PRreviewerPat', role: 'Code Review', specialty: 'pull request quality', description: 'Reviews pull request descriptions and scope', personality: 'thorough', color: '#f97583', enabled: true, weight: 1.2 },
 
-  // DevOps Council (4)
-  { id: 'devops-001', name: 'DockerDame', role: 'Container Expert', specialty: 'Dockerfile review', description: 'Reviews containerization', personality: 'reproducible', color: '#2493ed', enabled: true, weight: 1.2 },
-  { id: 'devops-002', name: 'CIGuru', role: 'CI/CD Specialist', specialty: 'pipelines', description: 'Reviews CI/CD pipelines', personality: 'automation-first', color: '#2493ed', enabled: true, weight: 1.1 },
-  { id: 'devops-003', name: 'KubernetesKnight', role: 'K8s Specialist', specialty: 'kubernetes', description: 'Reviews K8s configurations', personality: 'orchestrated', color: '#2493ed', enabled: false, weight: 1.0 },
-  { id: 'devops-004', name: 'InfraAsCodeIan', role: 'IaC Specialist', specialty: 'infrastructure as code', description: 'Reviews IaC practices', personality: 'repeatable', color: '#2493ed', enabled: false, weight: 1.0 }
+  // Error Handling Council (4) - Code resilience focused
+  { id: 'err-001', name: 'ExceptionElena', role: 'Exception Handling', specialty: 'try-catch patterns', description: 'Reviews exception handling patterns', personality: 'defensive', color: '#e8919d', enabled: true, weight: 1.2 },
+  { id: 'err-002', name: 'ErrorRecoveryEddie', role: 'Recovery Patterns', specialty: 'retry logic', description: 'Reviews error recovery and retry logic', personality: 'resilient', color: '#e8919d', enabled: true, weight: 1.1 },
+  { id: 'err-003', name: 'FallbackFrances', role: 'Fallback Strategies', specialty: 'graceful degradation', description: 'Reviews fallback and degradation strategies', personality: 'prepared', color: '#e8919d', enabled: true, weight: 1.0 },
+  { id: 'err-004', name: 'NullCheckNate', role: 'Null Safety', specialty: 'undefined/null handling', description: 'Reviews null/undefined handling patterns', personality: 'cautious', color: '#e8919d', enabled: true, weight: 1.1 }
 ];
 
 // ============ Council Manager ============
@@ -149,8 +146,8 @@ export class AICouncil {
       'arch': 'Architecture',
       'test': 'Testing',
       'doc-': 'Documentation',
-      'obs-': 'Observability',
-      'devo': 'DevOps'
+      'git-': 'Git & Collaboration',
+      'err-': 'Error Handling'
     };
     return categories[prefix] || 'General';
   }
