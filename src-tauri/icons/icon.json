@@ -1,0 +1,10 @@
+// DuckHive-IDE icons placeholder
+// In production, replace with actual icon files
+
+{
+  "images": [
+    { "path": "icons/32x32.png", "size": 32 },
+    { "path": "icons/128x128.png", "size": 128 },
+    { "path": "icons/128x128@2x.png", "size": 256 }
+  ]
+}

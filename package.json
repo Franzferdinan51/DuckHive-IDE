@@ -1,0 +1,26 @@
+{
+  "name": "duckhive-ide",
+  "version": "0.1.0",
+  "description": "AI-First IDE for Vibe Coding",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run dev:webui & bun run dev:tauri",
+    "dev:webui": "cd webui && bun dev",
+    "dev:tauri": "cd src-tauri && cargo tauri dev",
+    "build": "bun run build:core && bun run build:webui && bun run build:tauri",
+    "build:core": "bun run build --dir src",
+    "build:webui": "cd webui && bun run build",
+    "build:tauri": "cd src-tauri && cargo tauri build",
+    "test": "bun test",
+    "lint": "cd webui && bun lint"
+  },
+  "workspaces": [
+    "src",
+    "webui",
+    "src-tauri"
+  ],
+  "devDependencies": {
+    "bun": "^1.1.0",
+    "typescript": "^5.4.0"
+  }
+}
